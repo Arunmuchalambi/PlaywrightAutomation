@@ -1,0 +1,39 @@
+{
+  "name": "playwright-automation-practice",
+  "version": "1.0.0",
+  "description": "Playwright (JavaScript) E2E automation for testautomationpractice.blogspot.com",
+  "main": "index.js",
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:ui": "playwright test --ui",
+    "test:debug": "playwright test --debug",
+    "test:chromium": "playwright test --project=chromium",
+    "test:parallel": "playwright test --workers=4",
+    "test:smoke": "playwright test --grep @smoke",
+    "test:e2e": "playwright test tests/e2e",
+    "test:api": "playwright test tests/api",
+    "report": "playwright show-report",
+    "codegen": "playwright codegen https://testautomationpractice.blogspot.com/",
+    "trace:show": "playwright show-trace"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Arunmuchalambi/PlaywrightAutomation.git"
+  },
+  "keywords": [
+    "playwright",
+    "javascript",
+    "e2e",
+    "automation",
+    "qa"
+  ],
+  "author": "Arun",
+  "license": "MIT",
+  "type": "commonjs",
+  "devDependencies": {
+    "@faker-js/faker": "^10.3.0",
+    "@playwright/test": "^1.40.0",
+    "dotenv": "^16.3.1"
+  }
+}
