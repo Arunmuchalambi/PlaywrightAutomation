@@ -1,6 +1,11 @@
 # Playwright Automation Practice (JavaScript)
 
-End-to-end Playwright project for [testautomationpractice.blogspot.com](https://testautomationpractice.blogspot.com/), built from scratch with Page Object Model patterns aligned to the existing OpseraPlaywright layout (`pages/`, fixtures, CI reporters).
+End-to-end Playwright + Cucumber project covering:
+
+- [testautomationpractice.blogspot.com](https://testautomationpractice.blogspot.com/) (`Playwright1`)
+- [practice.expandtesting.com](https://practice.expandtesting.com/) (`Playwright2`)
+
+Built with Page Object Model patterns aligned to OpseraPlaywright (`features/`, `stepdefinitions/`, `pages/`, overall `test-results/index.html` reporting).
 
 ## What this covers
 

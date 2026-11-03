@@ -17,7 +17,11 @@ module.exports = {
     worldParameters: {
       headless: !headed,
       slowMo: Number(process.env.SLOW_MO || 0),
-      baseURL: process.env.BASE_URL || 'https://testautomationpractice.blogspot.com',
+      baseURL:
+        process.env.BASE_URL ||
+        (process.env.SUT === 'expand'
+          ? 'https://practice.expandtesting.com'
+          : 'https://testautomationpractice.blogspot.com'),
     },
   },
 };
