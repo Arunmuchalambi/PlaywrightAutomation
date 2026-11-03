@@ -34,14 +34,28 @@ npm run report           # open HTML report
 npm run codegen          # record against the practice site
 ```
 
-## Project layout
+## Project layout (Cucumber BDD + Playwright)
+
+Aligned with OpseraPlaywright structure:
 
 ```
-pages/           # BasePage + AutomationPracticePage (POM)
-fixtures/        # test data + upload files
-tests/e2e/       # UI journeys
-tests/api/       # broken-link status checks via request API
-.github/workflows/playwright.yml  # parallel CI + release gate
+features/              # Gherkin Feature files
+stepdefinitions/       # Step Definitions
+pages/                 # Page Objects (BasePage + AutomationPracticePage)
+support/               # Cucumber World + Hooks
+fixtures/              # test data + upload files
+tests/e2e/             # Optional Playwright-native .spec.js suite
+tests/api/             # broken-link status checks
+cucumber.js            # Cucumber runner config
+.github/workflows/     # CI + release gate
+```
+
+### Run Cucumber (Feature → Steps → Pages)
+
+```bash
+npm run cucumber:headed          # all features, headed browser
+npm run cucumber:journey         # screenshot widgets journey only
+npm run cucumber:smoke           # @smoke tagged scenarios
 ```
 
 ## Flake reduction

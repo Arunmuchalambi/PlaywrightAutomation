@@ -13,6 +13,10 @@
     "test:smoke": "playwright test --grep @smoke",
     "test:e2e": "playwright test tests/e2e",
     "test:api": "playwright test tests/api",
+    "cucumber": "cucumber-js",
+    "cucumber:headed": "HEADED=true SLOW_MO=150 cucumber-js",
+    "cucumber:journey": "HEADED=true SLOW_MO=150 cucumber-js --tags '@journey'",
+    "cucumber:smoke": "cucumber-js --tags '@smoke'",
     "report": "playwright show-report",
     "codegen": "playwright codegen https://testautomationpractice.blogspot.com/",
     "trace:show": "playwright show-trace"
@@ -32,8 +36,10 @@
   "license": "MIT",
   "type": "commonjs",
   "devDependencies": {
+    "@cucumber/cucumber": "^13.3.0",
     "@faker-js/faker": "^10.3.0",
     "@playwright/test": "^1.40.0",
+    "cucumber-html-reporter": "^7.2.0",
     "dotenv": "^16.3.1"
   }
 }
