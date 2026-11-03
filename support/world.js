@@ -2,7 +2,7 @@ const { setWorldConstructor, World } = require('@cucumber/cucumber');
 
 /**
  * Custom World — mirrors OpseraPlaywright Cucumber world pattern.
- * Holds shared Playwright page/context and page objects per scenario.
+ * Holds shared Playwright page/context, page objects, and API client.
  */
 class CustomWorld extends World {
   constructor(options) {
@@ -11,6 +11,10 @@ class CustomWorld extends World {
     this.context = null;
     this.page = null;
     this.practicePage = null;
+    this.apiRequest = null;
+    this.api = null;
+    this.lastApiResponse = null;
+    this.brokenHrefs = [];
   }
 }
 

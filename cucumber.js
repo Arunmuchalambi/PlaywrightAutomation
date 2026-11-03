@@ -1,3 +1,6 @@
+// Default: headless. Set HEADED=true only when you want to watch the browser.
+const headed = process.env.HEADED === 'true';
+
 module.exports = {
   default: {
     requireModule: [],
@@ -12,7 +15,7 @@ module.exports = {
     publishQuiet: true,
     parallel: 1,
     worldParameters: {
-      headless: process.env.HEADED === 'true' ? false : process.env.CI ? true : false,
+      headless: !headed,
       slowMo: Number(process.env.SLOW_MO || 0),
       baseURL: process.env.BASE_URL || 'https://testautomationpractice.blogspot.com',
     },

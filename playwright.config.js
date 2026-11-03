@@ -22,12 +22,13 @@ module.exports = defineConfig({
         ['list'],
         ['html', { open: 'never', outputFolder: 'playwright-report' }],
         ['junit', { outputFile: 'test-results/junit.xml' }],
-        ['json', { outputFile: 'test-results/results.json' }],
+        ['json', { outputFile: 'test-results/playwright-results.json' }],
         ['github'],
       ]
     : [
         ['list'],
-        ['html', { open: 'on-failure', outputFolder: 'playwright-report' }],
+        ['html', { open: 'never', outputFolder: 'playwright-report' }],
+        ['json', { outputFile: 'test-results/playwright-results.json' }],
       ],
   use: {
     baseURL: process.env.BASE_URL || 'https://testautomationpractice.blogspot.com',
@@ -40,19 +41,28 @@ module.exports = defineConfig({
   },
   projects: [
     {
+      name: 'api',
+      testMatch: /tests\/api\/.*\.spec\.js$/,
+      use: {
+        baseURL: process.env.BASE_URL || 'https://testautomationpractice.blogspot.com',
+      },
+    },
+    {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
+      testIgnore: [/tests\/api\/rest-crud\.spec\.js$/],
     },
     {
       name: 'firefox',
       use: { ...devices['Desktop Firefox'] },
-      testIgnore: [/broken-links\.spec\.js$/],
+      testIgnore: [/tests\/api\//],
     },
     {
       name: 'webkit',
       use: { ...devices['Desktop Safari'] },
-      testIgnore: [/broken-links\.spec\.js$/],
+      testIgnore: [/tests\/api\//],
     },
   ],
-  outputDir: 'test-results',
+  // Keep artifacts out of test-results/ so report history + index.html are not wiped
+  outputDir: 'test-results/playwright-artifacts',
 });
