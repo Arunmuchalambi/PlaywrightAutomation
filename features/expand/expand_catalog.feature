@@ -1,16 +1,17 @@
 @expand @catalog @ui
 Feature: ExpandTesting full Try it out catalog
   As a Senior QA Engineer
-  I want every practice card Try it out navigation validated
-  So that all listed UI examples remain reachable end to end
+  I want every practice card Try it out navigation and controls validated
+  So that inputs, textareas, tables, buttons and other widgets work end to end
 
   Background:
     Given I open the ExpandTesting practice home page
 
-  Scenario Outline: Navigate Try it out for "<title>"
+  Scenario Outline: Exercise Try it out functionality for "<title>"
     When I open ExpandTesting path "<path>"
     And I dismiss any unexpected ExpandTesting popups
     Then the ExpandTesting page should load successfully for "<path>"
+    And I exercise ExpandTesting page functionality for "<path>"
 
     Examples:
       | title                          | path                        |

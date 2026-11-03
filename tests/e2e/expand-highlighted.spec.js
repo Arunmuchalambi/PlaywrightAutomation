@@ -43,14 +43,17 @@ test.describe('ExpandTesting E2E @expand @smoke', () => {
     await expect(page.locator('body')).toContainText(/secure area|logged|success|Welcome/i);
   });
 
-  test('catalog smoke — open every practice path once', async ({ page }) => {
-    test.setTimeout(300_000);
+  test('catalog deep E2E — exercise controls on every practice path', async ({ page }) => {
+    test.setTimeout(600_000);
     const expand = new ExpandTestingPage(page);
+    const { ExpandPageExerciser } = require('../../pages/ExpandPageExerciser');
+    const exerciser = new ExpandPageExerciser(page);
 
     for (const route of PRACTICE_ROUTES) {
       await expand.openPath(route.path);
       await expand.dismissUnexpectedUi();
       await expect(page.locator('body')).toBeVisible();
+      await exerciser.exercise(route.path);
     }
   });
 });

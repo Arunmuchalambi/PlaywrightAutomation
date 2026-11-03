@@ -31,6 +31,7 @@
     "report:merge": "node scripts/generate-overall-report.js --merge-cucumber",
     "report:all": "node scripts/run-all-with-report.js",
     "report:expand": "node scripts/run-expand-with-report.js",
+    "report:expand:headed": "HEADED=true SLOW_MO=50 node scripts/run-expand-with-report.js",
     "report:open": "open test-results/index.html",
     "report:cucumber": "open test-results/cucumber-report.html",
     "codegen": "playwright codegen https://practice.expandtesting.com/",

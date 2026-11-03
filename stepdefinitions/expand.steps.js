@@ -2,6 +2,7 @@ const { Given, When, Then } = require('@cucumber/cucumber');
 const { expect, request } = require('@playwright/test');
 const { ApiClient } = require('../api/ApiClient');
 const { EXPAND_BASE } = require('../fixtures/expandRoutes');
+const { ExpandPageExerciser } = require('../pages/ExpandPageExerciser');
 
 Given('I open the ExpandTesting practice home page', async function () {
   await this.expandPage.openHome();
@@ -30,6 +31,12 @@ Then('the ExpandTesting page should load successfully for {string}', async funct
   if (!['/redirector', '/notes/app/login'].includes(path)) {
     expect(url).toContain(path.replace(/\/$/, ''));
   }
+});
+
+Then('I exercise ExpandTesting page functionality for {string}', async function (path) {
+  const exerciser = new ExpandPageExerciser(this.page);
+  await this.expandPage.dismissUnexpectedUi();
+  await exerciser.exercise(path);
 });
 
 Then('the ExpandTesting page URL should contain {string}', async function (fragment) {

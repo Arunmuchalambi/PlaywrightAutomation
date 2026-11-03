@@ -1,7 +1,10 @@
 #!/usr/bin/env node
 /**
- * Runs ExpandTesting UI + API suites (single window / headless) and builds
+ * Runs ExpandTesting UI + API suites (single shared window) and builds
  * the overall Opsera-style dashboard with combined cucumber report.
+ *
+ * Headed: HEADED=true npm run report:expand
+ * Headless (default): npm run report:expand
  */
 const { spawnSync } = require('child_process');
 const fs = require('fs');
@@ -13,9 +16,10 @@ const CUCUMBER_JSON = path.join(RESULTS, 'cucumber-report.json');
 const CUCUMBER_HTML = path.join(RESULTS, 'cucumber-report.html');
 const INDEX = path.join(RESULTS, 'index.html');
 
+const headed = process.env.HEADED === 'true';
 const expandEnv = {
-  HEADED: 'false',
-  SLOW_MO: '0',
+  HEADED: headed ? 'true' : 'false',
+  SLOW_MO: process.env.SLOW_MO || (headed ? '50' : '0'),
   BASE_URL: 'https://practice.expandtesting.com',
   SUT: 'expand',
 };
@@ -41,6 +45,7 @@ function main() {
   fs.mkdirSync(RESULTS, { recursive: true });
   console.log('══════════════════════════════════════════════');
   console.log('  ExpandTesting UI + API — Full Run + Report');
+  console.log(`  Mode: ${headed ? 'HEADED (one window)' : 'headless'}  slowMo=${expandEnv.SLOW_MO}`);
   console.log('══════════════════════════════════════════════');
 
   // UI core + catalog (not API)

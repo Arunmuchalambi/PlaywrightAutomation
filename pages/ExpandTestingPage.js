@@ -72,8 +72,8 @@ class ExpandTestingPage extends BasePage {
   }
 
   async openPath(path) {
-    // Basic/Digest auth demos accept admin/admin
-    if (path === '/basic-auth' || path === '/digest-auth') {
+    // Basic/Digest auth + secure download demos accept admin/admin
+    if (path === '/basic-auth' || path === '/digest-auth' || path === '/download-secure') {
       await this.page.goto(`https://admin:admin@practice.expandtesting.com${path}`, {
         waitUntil: 'domcontentloaded',
       });
@@ -91,19 +91,32 @@ class ExpandTestingPage extends BasePage {
     await expect(this.page.locator('#btn-display-inputs')).toBeVisible();
   }
 
+  async fillReliable(selector, value) {
+    const field = this.page.locator(selector);
+    await field.scrollIntoViewIfNeeded().catch(() => {});
+    await field.click({ force: true });
+    await field.fill('');
+    await field.fill(String(value));
+    const current = await field.inputValue().catch(() => '');
+    if (current !== String(value)) {
+      await field.click({ force: true });
+      await this.page.keyboard.press('Meta+A').catch(() => {});
+      await this.page.keyboard.press('Control+A').catch(() => {});
+      await this.page.keyboard.type(String(value), { delay: 15 });
+    }
+    await expect(field).toHaveValue(String(value), { timeout: 10_000 });
+  }
+
   async fillWebInputs({ number, text, password, date }) {
     await this.assertWebInputsFormVisible();
-    // Ads/overlays can steal focus — use force + keyboard typing
-    await this.page.locator('#input-text').click({ force: true });
-    await this.page.locator('#input-text').fill('');
-    await this.page.keyboard.type(text, { delay: 20 });
-    await this.page.locator('#input-password').click({ force: true });
-    await this.page.keyboard.type(password, { delay: 10 });
-    await this.page.locator('#input-number').click({ force: true });
-    await this.page.keyboard.type(String(number), { delay: 10 });
+    // Ads/overlays can steal focus — fill with retry + assert value sticks
+    await this.fillReliable('#input-text', text);
+    await this.fillReliable('#input-password', password);
+    await this.fillReliable('#input-number', String(number));
     await this.page.locator('#input-date').fill(date).catch(() => {});
     await this.page.locator('#btn-display-inputs').click({ force: true });
     await this.assertWebInputsFormVisible();
+    await expect(this.page.locator('#input-text')).toHaveValue(text);
   }
 
   async login(username, password) {
