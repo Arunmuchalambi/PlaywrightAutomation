@@ -1,4 +1,4 @@
-name: Playwright E2E
+name: Playwright Automation CI
 
 on:
   push:
@@ -12,130 +12,149 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  e2e-blogspot:
-    name: Blogspot E2E (chromium)
+  # ─────────────────────────────────────────────────────────────
+  # Job 1 — Practice Blogspot UI + site HTTP checks
+  # Site: https://testautomationpractice.blogspot.com
+  # Covers: forms, alerts, tables, uploads, popups, dates, footer links
+  # ─────────────────────────────────────────────────────────────
+  practice-blogspot-ui:
+    name: "1 · Practice site UI (Blogspot)"
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: npm
 
-      - name: Install dependencies
+      - name: Install npm packages
         run: npm ci
 
-      - name: Cache Playwright browsers
+      - name: Cache Playwright Chromium
         uses: actions/cache@v4
         with:
           path: ~/.cache/ms-playwright
           key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
 
-      - name: Install Playwright browsers
+      - name: Install Chromium browser for Playwright
         run: npx playwright install --with-deps chromium
 
-      # Exclude Expand/agent suites — ExpandTesting base URL is a separate job.
-      # workers=1 reduces Blogspot empty-page / 429 flakes under GitHub Actions IPs.
-      - name: Run Blogspot Playwright tests (chromium)
+      - name: Run Blogspot E2E and site-HTTP tests
+        # Skips ExpandTesting / agent / deep-catalog suites (those need a different base URL)
         run: npx playwright test --project=chromium --workers=1 --grep-invert "@expand|@agents|@catalog|Agent seed"
         env:
           CI: true
           BASE_URL: https://testautomationpractice.blogspot.com
 
-      - name: Upload HTML report
+      - name: Upload Blogspot HTML report
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-report-blogspot
+          name: report-blogspot-ui
           path: playwright-report/
           retention-days: 14
 
-      - name: Upload traces / screenshots / video
+      - name: Upload Blogspot failure artifacts
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: test-results-blogspot
+          name: artifacts-blogspot-ui
           path: test-results/
           retention-days: 7
 
-  e2e-expand:
-    name: ExpandTesting smoke (chromium)
+  # ─────────────────────────────────────────────────────────────
+  # Job 2 — ExpandTesting practice smoke + Playwright Test Agents sample
+  # Site: https://practice.expandtesting.com
+  # Covers: Try-it-out highlights, agent seed/sample, Expand API smoke
+  # Does NOT run the full 74-page deep catalog (tagged @catalog)
+  # ─────────────────────────────────────────────────────────────
+  expandtesting-smoke:
+    name: "2 · ExpandTesting smoke + agents"
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: npm
 
-      - name: Install dependencies
+      - name: Install npm packages
         run: npm ci
 
-      - name: Cache Playwright browsers
+      - name: Cache Playwright Chromium
         uses: actions/cache@v4
         with:
           path: ~/.cache/ms-playwright
           key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
 
-      - name: Install Playwright browsers
+      - name: Install Chromium browser for Playwright
         run: npx playwright install --with-deps chromium
 
-      # Highlighted + agent sample only — not the full 74-page @catalog deep run
-      - name: Run ExpandTesting smoke / agent sample
+      - name: Run ExpandTesting smoke and agent sample tests
         run: npx playwright test --project=chromium --workers=1 --grep "@expand|@agents" --grep-invert "@catalog"
         env:
           CI: true
           BASE_URL: https://practice.expandtesting.com
           EXPAND_BASE_URL: https://practice.expandtesting.com
 
-      - name: Upload HTML report
+      - name: Upload ExpandTesting HTML report
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-report-expand
+          name: report-expandtesting-smoke
           path: playwright-report/
           retention-days: 14
 
-      - name: Upload traces / screenshots / video
+      - name: Upload ExpandTesting failure artifacts
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: test-results-expand
+          name: artifacts-expandtesting-smoke
           path: test-results/
           retention-days: 7
 
-  release-gate:
-    name: Release gate (smoke)
+  # ─────────────────────────────────────────────────────────────
+  # Job 3 — Final release gate (runs only after jobs 1 + 2 pass)
+  # Runs the @release critical end-to-end journey on Blogspot
+  # Acts as the last green light before merge confidence
+  # ─────────────────────────────────────────────────────────────
+  release-critical-journey:
+    name: "3 · Release gate · critical journey"
     runs-on: ubuntu-latest
-    needs: [e2e-blogspot, e2e-expand]
-    # Runs on push/PR whenever both upstream jobs succeed (no manual cancel path)
+    needs: [practice-blogspot-ui, expandtesting-smoke]
     if: success()
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: npm
 
-      - name: Install dependencies
+      - name: Install npm packages
         run: npm ci
 
-      - name: Cache Playwright browsers
+      - name: Cache Playwright Chromium
         uses: actions/cache@v4
         with:
           path: ~/.cache/ms-playwright
           key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
 
-      - name: Install Playwright browsers
+      - name: Install Chromium browser for Playwright
         run: npx playwright install --with-deps chromium
 
-      - name: Smoke / release-tagged journey
+      - name: Run @release critical user journey
         run: npx playwright test --project=chromium --grep @release --workers=1
         env:
           CI: true
