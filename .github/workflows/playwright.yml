@@ -100,7 +100,8 @@ jobs:
     name: Release gate (smoke)
     runs-on: ubuntu-latest
     needs: [e2e-blogspot, e2e-expand]
-    if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/Playwright')
+    # Only on main after merge — avoid long duplicate installs on every Playwright* push/PR
+    if: github.ref == 'refs/heads/main'
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
