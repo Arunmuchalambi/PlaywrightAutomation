@@ -32,13 +32,17 @@ test.describe('Form, navigation, dates, uploads @smoke', () => {
   });
 
   test('date pickers accept mm/dd/yyyy, dd/mm/yyyy UI pick, and date range', async () => {
-    await practice.setDatePicker1('11/03/2026');
-    await expect(practice.datePicker1).toHaveValue('11/03/2026');
+    const { todayMmDdYyyy, toIsoDate } = require('../../fixtures/dates');
+    const today = todayMmDdYyyy();
+    await practice.setDatePicker1(today);
+    await expect(practice.datePicker1).toHaveValue(today);
 
     await practice.setDatePicker2ViaUi('15');
     await expect(practice.datePicker2).not.toHaveValue('');
 
-    await practice.setDateRange('2026-11-01', '2026-11-10');
+    const start = toIsoDate(new Date(Date.UTC(2026, 10, 1)));
+    const end = toIsoDate(new Date(Date.UTC(2026, 10, 10)));
+    await practice.setDateRange(start, end);
     await expect(practice.dateRangeResult).not.toHaveText('');
   });
 

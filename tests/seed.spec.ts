@@ -2,19 +2,16 @@
  * Seed test for Playwright Test Agents (planner / generator / healer).
  * @see https://playwright.dev/docs/test-agents
  *
- * Planner runs this seed to bootstrap page context (fixtures, base URL, dialogs).
- * Generated tests should follow the same imports and setup style.
+ * Always targets ExpandTesting — do not inherit Blogspot BASE_URL from CI.
  */
 import { test, expect } from '@playwright/test';
 
-const EXPAND_BASE =
-  process.env.EXPAND_BASE_URL ||
-  process.env.BASE_URL ||
-  'https://practice.expandtesting.com';
+const EXPAND_BASE = process.env.EXPAND_BASE_URL || 'https://practice.expandtesting.com';
 
-test.describe('Agent seed — ExpandTesting', () => {
+test.use({ baseURL: EXPAND_BASE });
+
+test.describe('Agent seed — ExpandTesting @agents', () => {
   test('seed', async ({ page }) => {
-    // Auto-dismiss unexpected JS dialogs (matches Cucumber suite behavior)
     page.on('dialog', async (dialog) => {
       try {
         await dialog.dismiss();
@@ -27,7 +24,6 @@ test.describe('Agent seed — ExpandTesting', () => {
     await expect(page.locator('body')).toBeVisible();
     await expect(page).toHaveURL(/expandtesting\.com/i);
 
-    // Close common overlays if present so planner starts on a clean home page
     const cookieBtn = page.locator('#js-cookie-button, .cookie-btn').first();
     if (await cookieBtn.isVisible().catch(() => false)) {
       await cookieBtn.click().catch(() => {});

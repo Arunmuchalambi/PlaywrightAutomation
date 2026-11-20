@@ -2,16 +2,15 @@
 // seed: tests/seed.spec.ts
 /**
  * Sample suite produced in Playwright Test Agent generator style.
- * Run: npm run agents:sample
+ * Always targets ExpandTesting — ignore Blogspot BASE_URL from CI.
  */
 import { test, expect } from '@playwright/test';
 
-const EXPAND_BASE =
-  process.env.EXPAND_BASE_URL ||
-  process.env.BASE_URL ||
-  'https://practice.expandtesting.com';
+const EXPAND_BASE = process.env.EXPAND_BASE_URL || 'https://practice.expandtesting.com';
 
-test.describe('ExpandTesting agent sample', () => {
+test.use({ baseURL: EXPAND_BASE });
+
+test.describe('ExpandTesting agent sample @agents @expand', () => {
   test.beforeEach(async ({ page }) => {
     page.on('dialog', async (dialog) => {
       try {
@@ -20,11 +19,9 @@ test.describe('ExpandTesting agent sample', () => {
         /* already handled */
       }
     });
-    await page.goto(EXPAND_BASE, { waitUntil: 'domcontentloaded' });
   });
 
-  test('1.1 Fill and display web inputs @agents @smoke', async ({ page }) => {
-    // 1. Open Web inputs
+  test('1.1 Fill and display web inputs @smoke', async ({ page }) => {
     await page.goto(`${EXPAND_BASE}/inputs`, { waitUntil: 'domcontentloaded' });
 
     const text = page.locator('#input-text');
@@ -37,7 +34,6 @@ test.describe('ExpandTesting agent sample', () => {
     await expect(password).toBeVisible();
     await expect(number).toBeVisible();
 
-    // 2–5. Fill fields (force — ads can steal focus)
     await text.click({ force: true });
     await text.fill('Playwright');
     await expect(text).toHaveValue('Playwright');
@@ -50,18 +46,15 @@ test.describe('ExpandTesting agent sample', () => {
     await number.fill('42');
     await expect(number).toHaveValue('42');
 
-    await date.fill('2026-11-03').catch(() => {});
-
-    // 6. Display Inputs
+    await date.fill('2026-11-20').catch(() => {});
     await display.click({ force: true });
 
-    // Expected: form still visible; text value retained
     await expect(text).toBeVisible();
     await expect(text).toHaveValue('Playwright');
     await expect(page).not.toHaveURL(/error|404/i);
   });
 
-  test('2.1 Valid login @agents @smoke', async ({ page }) => {
+  test('2.1 Valid login @smoke', async ({ page }) => {
     await page.goto(`${EXPAND_BASE}/login`, { waitUntil: 'domcontentloaded' });
 
     await page.locator('#username').fill('practice');

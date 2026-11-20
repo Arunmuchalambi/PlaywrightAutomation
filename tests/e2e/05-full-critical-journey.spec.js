@@ -16,7 +16,8 @@ test.describe('Critical E2E journey @smoke @release', () => {
     await practice.fillMainForm(data);
     await practice.assertMainForm(data);
 
-    await practice.setDatePicker1('11/03/2026');
+    const { todayMmDdYyyy } = require('../../fixtures/dates');
+    await practice.setDatePicker1(todayMmDdYyyy());
     await practice.setDateRange('2026-11-01', '2026-11-05');
     await expect(practice.dateRangeResult).not.toHaveText('');
 

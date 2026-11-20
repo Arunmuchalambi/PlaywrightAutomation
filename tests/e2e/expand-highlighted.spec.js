@@ -43,7 +43,7 @@ test.describe('ExpandTesting E2E @expand @smoke', () => {
     await expect(page.locator('body')).toContainText(/secure area|logged|success|Welcome/i);
   });
 
-  test('catalog deep E2E — exercise controls on every practice path', async ({ page }) => {
+  test('catalog deep E2E — exercise controls on every practice path @catalog', async ({ page }) => {
     test.setTimeout(600_000);
     const expand = new ExpandTestingPage(page);
     const { ExpandPageExerciser } = require('../../pages/ExpandPageExerciser');

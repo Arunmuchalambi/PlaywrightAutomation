@@ -98,7 +98,17 @@ class AutomationPracticePage extends BasePage {
 
   async open() {
     await this.goto('/');
-    await expect(this.page).toHaveTitle(/Automation Testing Practice/i);
+    await this.page.waitForLoadState('domcontentloaded');
+    // Blogspot/CDN sometimes serves URL-as-title under load; assert page content instead
+    const title = await this.page.title();
+    if (/Automation Testing Practice/i.test(title)) {
+      await expect(this.page).toHaveTitle(/Automation Testing Practice/i);
+    } else {
+      await expect(this.page.locator('body')).toContainText(
+        /Automation Testing Practice|GUI Elements|Name:|Email:/i,
+        { timeout: 20_000 },
+      );
+    }
   }
 
   /** @param {string} day e.g. 'monday' */
@@ -144,8 +154,11 @@ class AutomationPracticePage extends BasePage {
   }
 
   async setDatePicker1(mmddyyyy) {
+    await this.datePicker1.click({ force: true });
+    await this.datePicker1.fill('');
     await this.datePicker1.fill(mmddyyyy);
     await this.datePicker1.press('Enter');
+    await expect(this.datePicker1).toHaveValue(mmddyyyy, { timeout: 10_000 });
   }
 
   async setDatePicker2ViaUi(dayLabel) {

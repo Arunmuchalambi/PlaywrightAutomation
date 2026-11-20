@@ -25,8 +25,10 @@ test.describe('Popups, dates, pagination & footer @smoke', () => {
     await expect(practice.animalsSelect).toHaveValues(['cheetah', 'dog']);
 
     // —— Date Picker 1 (mm/dd/yyyy) ——
-    await practice.setDatePicker1('11/03/2026');
-    await expect(practice.datePicker1).toHaveValue('11/03/2026');
+    const { todayMmDdYyyy } = require('../../fixtures/dates');
+    const today = todayMmDdYyyy();
+    await practice.setDatePicker1(today);
+    await expect(practice.datePicker1).toHaveValue(today);
 
     // —— Date Picker 2 (dd/mm/yyyy) via calendar UI ——
     await practice.setDatePicker2ViaUi('15');
