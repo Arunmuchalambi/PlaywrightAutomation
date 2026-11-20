@@ -97,18 +97,30 @@ class AutomationPracticePage extends BasePage {
   }
 
   async open() {
-    await this.goto('/');
-    await this.page.waitForLoadState('domcontentloaded');
-    // Blogspot/CDN sometimes serves URL-as-title under load; assert page content instead
-    const title = await this.page.title();
-    if (/Automation Testing Practice/i.test(title)) {
-      await expect(this.page).toHaveTitle(/Automation Testing Practice/i);
-    } else {
-      await expect(this.page.locator('body')).toContainText(
-        /Automation Testing Practice|GUI Elements|Name:|Email:/i,
-        { timeout: 20_000 },
-      );
+    const ready = this.page.locator('#name, #email, input[placeholder*="Name"], #Wikipedia1_wikipedia-search-input').first();
+    const content = this.page.locator('body');
+
+    // Blogspot/CDN often returns empty or rate-limited shells under CI parallel load — retry reload
+    let lastError;
+    for (let attempt = 1; attempt <= 3; attempt++) {
+      try {
+        await this.goto('/', { waitUntil: 'domcontentloaded', timeout: 45_000 });
+        await this.page.waitForLoadState('domcontentloaded');
+        await expect(content).toContainText(
+          /Automation Testing Practice|GUI Elements|Name|Email|male|Female/i,
+          { timeout: 15_000 },
+        );
+        await expect(ready).toBeVisible({ timeout: 15_000 });
+        return;
+      } catch (err) {
+        lastError = err;
+        if (attempt < 3) {
+          await this.page.waitForTimeout(1500 * attempt);
+          await this.page.reload({ waitUntil: 'domcontentloaded' }).catch(() => {});
+        }
+      }
     }
+    throw lastError;
   }
 
   /** @param {string} day e.g. 'monday' */

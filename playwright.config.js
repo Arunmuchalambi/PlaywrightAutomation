@@ -14,8 +14,8 @@ module.exports = defineConfig({
   fullyParallel: true,
   forbidOnly: isCI,
   retries: isCI ? 2 : 1,
-  // Keep CI concurrency low — Blogspot rate-limits (429) under heavy parallel load
-  workers: isCI ? 2 : undefined,
+  // Keep CI concurrency low — Blogspot rate-limits / empty shells under parallel load
+  workers: isCI ? 1 : undefined,
   timeout: 60_000,
   expect: { timeout: 10_000 },
   reporter: isCI

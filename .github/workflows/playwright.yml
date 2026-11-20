@@ -31,9 +31,9 @@ jobs:
         run: npx playwright install --with-deps chromium
 
       # Exclude Expand/agent suites — they need ExpandTesting base URL (separate job).
-      # Lower workers to reduce Blogspot 429 rate limits.
+      # workers=1 reduces Blogspot empty-page / 429 flakes under GitHub Actions IPs.
       - name: Run Blogspot Playwright tests (chromium)
-        run: npx playwright test --project=chromium --workers=2 --grep-invert "@expand|@agents|@catalog|Agent seed"
+        run: npx playwright test --project=chromium --workers=1 --grep-invert "@expand|@agents|@catalog|Agent seed"
         env:
           CI: true
           BASE_URL: https://testautomationpractice.blogspot.com
