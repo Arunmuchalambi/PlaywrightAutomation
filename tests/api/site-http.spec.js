@@ -6,7 +6,15 @@ const { AutomationPracticePage } = require('../../pages/AutomationPracticePage')
 test.describe('Practice site HTTP / API integration @api', () => {
   test('homepage returns 200 and HTML content-type', async ({ request }) => {
     const api = new ApiClient(request, SITE_BASE);
-    const res = await api.get('/');
+    let res = await api.get('/');
+    // Blogspot rate-limits GitHub Actions IPs — short backoff once on 429
+    if (res.status === 429) {
+      await new Promise((r) => setTimeout(r, 3000));
+      res = await api.get('/');
+    }
+    if (res.status === 429) {
+      test.skip(true, 'Blogspot returned 429 (rate limited)');
+    }
     expect(res.status).toBe(200);
     expect(res.headers['content-type'] || '').toMatch(/text\/html/i);
     expect(String(res.body)).toMatch(/Automation Testing Practice/i);
