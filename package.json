@@ -35,7 +35,10 @@
     "report:open": "open test-results/index.html",
     "report:cucumber": "open test-results/cucumber-report.html",
     "codegen": "playwright codegen https://practice.expandtesting.com/",
-    "trace:show": "playwright show-trace"
+    "trace:show": "playwright show-trace",
+    "agents:init": "playwright init-agents --loop=vscode --project=chromium --prompts",
+    "agents:seed": "BASE_URL=https://practice.expandtesting.com playwright test tests/seed.spec.ts --project=chromium",
+    "agents:sample": "BASE_URL=https://practice.expandtesting.com playwright test tests/e2e/expand-agent-sample.spec.ts --project=chromium --workers=1"
   },
   "repository": {
     "type": "git",

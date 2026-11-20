@@ -31,7 +31,12 @@ module.exports = defineConfig({
         ['json', { outputFile: 'test-results/playwright-results.json' }],
       ],
   use: {
-    baseURL: process.env.BASE_URL || 'https://testautomationpractice.blogspot.com',
+    // SUT=expand (agent seed / Expand suite) or BASE_URL override; default Blogspot practice site
+    baseURL:
+      process.env.BASE_URL ||
+      (process.env.SUT === 'expand'
+        ? 'https://practice.expandtesting.com'
+        : 'https://testautomationpractice.blogspot.com'),
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',

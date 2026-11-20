@@ -1,0 +1,32 @@
+---
+description: Playwright Test Agents (planner, generator, healer) for this repo
+alwaysApply: false
+globs: "{specs/**,tests/seed.spec.ts,.github/agents/**,.github/prompts/**,.vscode/mcp.json}"
+---
+
+# Playwright Test Agents
+
+Follow [Playwright Test Agents](https://playwright.dev/docs/test-agents).
+
+## Agents
+
+| Agent | Role | Definition |
+|-------|------|------------|
+| 🎭 planner | Explore app → Markdown plan in `specs/` | `.github/agents/playwright-test-planner.agent.md` |
+| 🎭 generator | Plan → Playwright tests under `tests/` | `.github/agents/playwright-test-generator.agent.md` |
+| 🎭 healer | Fix failing tests | `.github/agents/playwright-test-healer.agent.md` |
+
+## Conventions for this project
+
+- Seed: `tests/seed.spec.ts` (ExpandTesting home + dialog dismiss)
+- Plans: `specs/*.md` (starter: `specs/expand-core-journeys.md`)
+- MCP: `.vscode/mcp.json` → `npx playwright run-test-mcp-server`
+- Existing suite is mostly **JavaScript** + Cucumber POM under `pages/`, `features/`, `stepdefinitions/`
+- Prefer generating Playwright specs that reuse `pages/ExpandTestingPage.js` / `ExpandPageExerciser.js` when useful
+- After upgrading `@playwright/test`, run `npm run agents:init`
+
+## Typical prompts
+
+1. Plan: use `.github/prompts/playwright-test-plan.prompt.md`
+2. Generate: use `.github/prompts/playwright-test-generate.prompt.md`
+3. Heal: use `.github/prompts/playwright-test-heal.prompt.md`
