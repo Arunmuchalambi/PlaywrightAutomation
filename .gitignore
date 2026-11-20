@@ -16,7 +16,9 @@ trace.zip
 # OS / IDE
 .DS_Store
 Thumbs.db
-.vscode/
+.vscode/*
+!.vscode/mcp.json
+
 .idea/
 *.log
 

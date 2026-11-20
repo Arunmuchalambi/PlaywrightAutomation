@@ -26,7 +26,11 @@
     "report:open": "open test-results/index.html",
     "report:cucumber": "open test-results/cucumber-report.html",
     "codegen": "playwright codegen https://testautomationpractice.blogspot.com/",
-    "trace:show": "playwright show-trace"
+    "trace:show": "playwright show-trace",
+    "agents:init": "playwright init-agents --loop=vscode --project=chromium --prompts",
+    "agents:seed": "playwright test tests/seed.spec.ts --project=chromium",
+    "agents:e2e": "playwright test tests/seed.spec.ts tests/e2e/blogspot-agent-e2e.spec.ts --project=chromium --workers=1",
+    "agents:e2e:headed": "playwright test tests/seed.spec.ts tests/e2e/blogspot-agent-e2e.spec.ts --project=chromium --workers=1 --headed"
   },
   "repository": {
     "type": "git",
